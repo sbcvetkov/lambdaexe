@@ -1,4 +1,4 @@
-# Teraform 
+# Terraform 
 
 ## Overview
 
