@@ -1,0 +1,22 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - echo logging in to AWS ECR...
+      - $(aws ecr get-login --no-include-email --region eu-central-1)
+  build:
+    commands:
+      - echo build Docker image on `date`
+      - cd python-app
+      - docker build -t lambdaexe_ecr:latest .
+      - docker tag lambdaexe_ecr:latest 210303085364.dkr.ecr.eu-central-1.amazonaws.com/lambdaexe_ecr:latest
+      - echo sending web pages to S3...  
+
+  post_build:
+    commands:
+      - echo build Docker image complete `date`
+      - echo push latest Docker images to ECR...
+      - docker push 210303085364.dkr.ecr.eu-central-1.amazonaws.com/lambdaexe_ecr:latest
+      - cd ../web-app 
+      - aws s3 sync . "s3://lambdaexe-staticpyapp"
+
